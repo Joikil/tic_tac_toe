@@ -1,4 +1,4 @@
-from ttt_game import TicTacToeState,Action,Record,Sign,Turn
+from ttt_game import TicTacToeState,Action,Record,Sign,Turn,FileActionRecorder
 import os.path
 
 class TicTacToe:
@@ -6,11 +6,14 @@ class TicTacToe:
         self.state = TicTacToeState()
         self.record= Record()
         self.f_name="Game_record.txt"
+        self.f_name_abs="Game_reco.txt"
+        self.far=FileActionRecorder(self.f_name_abs)
 
     def play(self):
         while not self.state.ended():
             self.display_board()
             action = self.get_player_move()
+            self.far.record(action)
             self.state.dispatch(action)
             self.record.save_action_to_file(action,self.f_name)
         self.display_board()
@@ -32,6 +35,7 @@ class TicTacToe:
                 print("Invalid input. Please enter two numbers (0-2) separated by a space.")
 
     def display_board(self):
+        
         if self.state.board == [[Sign._ for _ in range(3)] for _ in range(3)] and os.path.isfile(self.f_name) and os.stat(self.f_name)!=0:
                 a=input("To restore previos session enter 'r' or Any key to start a new game:")
                 if a == 'r':
