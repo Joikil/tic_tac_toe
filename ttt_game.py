@@ -52,7 +52,7 @@ class Action:
     def __init__(self, square):
         self.square = square
 
-class Record:
+'''class Record:
     def __init__(self):
         ...
     def save_action_to_file(self, action,x):
@@ -67,3 +67,27 @@ class Record:
             a,b=map(int,i.split())
             l.append((a,b))
         return l
+'''
+
+import abc
+class ActionRecorder(abc.ABC):
+    @abc.abstractmethod
+    def moves(self) -> t.List[Action]:
+        pass
+
+    @abc.abstractmethod
+    def record(self, action: Action):
+        ...
+
+class FileActionRecorder(ActionRecorder):
+    def __init__(self, f) -> None:
+        self.f = f
+
+    #Extracting from source
+    def moves(self):
+        ... 
+        
+    #Adding into source
+    def record(self,action):
+        ...
+        
