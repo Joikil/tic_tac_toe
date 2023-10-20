@@ -58,6 +58,21 @@ class Action:
     def __init__(self, square):
         self.square = square
 
+class Record:
+    def __init__(self):
+        ...
+    def save_action_to_file(self, action,x):
+        with open(x, "a") as file:
+            file.write(str(action.square[0])+" "+str(action.square[1])+"\n")
+            file.close()
+
+    def action_to_g_board(self,x):
+        r=open(x,"r")
+        l=[]
+        for i in r:
+            a,b=map(int,i.split())
+            l.append((a,b))
+        return l
 
 
                     
