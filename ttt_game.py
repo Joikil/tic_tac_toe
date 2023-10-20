@@ -1,6 +1,6 @@
 import enum
 import typing as t
-import os.path
+
 class Sign(enum.IntEnum):
     _ = enum.auto()
     x = enum.auto()
@@ -14,12 +14,6 @@ class Turn(enum.IntEnum):
         if self == Turn.x:
             return Turn.o
         return Turn.x
-#this is to read from file
-'''if os.path.isfile("Game_record.txt"):
-            r= open("Game_record.txt","r")
-            for x in r:
-                i,j=map(str,x.split())
-            r.close()'''
 
 def sign_on_turn(turn: Turn):
     if turn == Turn.x:
