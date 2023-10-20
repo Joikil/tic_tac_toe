@@ -86,8 +86,18 @@ class FileActionRecorder(ActionRecorder):
     #Extracting from source
     def moves(self):
         ... 
-        
+        r=open(self.f,"ar")
+        content=r.read(1)
+        #condition for empty file
+        if not content:
+            pass
+        else:
+            for i in r:
+                
+                ...
     #Adding into source
     def record(self,action):
         ...
-        
+        file=open(self.f, "a")
+        file.write(str(action.square[0])+" "+str(action.square[1])+"\n")
+        file.close()
