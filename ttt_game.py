@@ -67,6 +67,3 @@ class Record:
             a,b=map(int,i.split())
             l.append((a,b))
         return l
-
-
-                    
