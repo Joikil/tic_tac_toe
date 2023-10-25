@@ -9,13 +9,13 @@ class TicTacToe:
         self.f_name_abs="Game_reco.txt"
         x=open("Game_reco.txt","a")
         x.close()
-        self.far=FileActionRecorder(self.f_name_abs)
+        self.ar=FileActionRecorder(self.f_name_abs)
 
     def play(self):
         while not self.state.ended():
             self.display_board()
             action = self.get_player_move()
-            self.far.record(action)
+            self.ar.record(action)
             self.state.dispatch(action)
             #self.record.save_action_to_file(action,self.f_name)
         self.display_board()
@@ -38,7 +38,7 @@ class TicTacToe:
 
     def display_board(self):
         if self.state.board == [[Sign._ for _ in range(3)] for _ in range(3)]:
-            l=self.far.moves()
+            l=self.ar.moves()
             for i in l:
                 a=Action(i)
                 self.state.dispatch(a)
