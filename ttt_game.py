@@ -1,12 +1,14 @@
 import enum
+import io
 import typing as t
-#import 
+
 
 class Sign(enum.IntEnum):
     _ = enum.auto()
     x = enum.auto()
     o = enum.auto()
-1
+
+
 class Turn(enum.IntEnum):
     x = enum.auto()
     o = enum.auto()
@@ -16,10 +18,12 @@ class Turn(enum.IntEnum):
             return Turn.o
         return Turn.x
 
+
 def sign_on_turn(turn: Turn):
     if turn == Turn.x:
         return Sign.x
     return Sign.o
+
 
 class TicTacToeState:
     def __init__(self):
@@ -36,7 +40,9 @@ class TicTacToeState:
         self.turn = self.turn.toggle()
 
     def ended(self) -> bool:
-        return self.winner() is not None or all(all(cell != Sign._ for cell in row) for row in self.board)
+        return self.winner() is not None or all(
+            all(cell != Sign._ for cell in row) for row in self.board
+        )
 
     def winner(self) -> t.Optional[Turn]:
         for sign in (Sign.x, Sign.o):
@@ -45,32 +51,21 @@ class TicTacToeState:
                     return Turn.x if sign == Sign.x else Turn.o
                 if all(self.board[j][i] == sign for j in range(3)):
                     return Turn.x if sign == Sign.x else Turn.o
-            if all(self.board[i][i] == sign for i in range(3)) or all(self.board[i][2 - i] == sign for i in range(3)):
+            if all(self.board[i][i] == sign for i in range(3)) or all(
+                self.board[i][2 - i] == sign for i in range(3)
+            ):
                 return Turn.x if sign == Sign.x else Turn.o
         return None
+
 
 class Action:
     def __init__(self, square):
         self.square = square
 
-'''class Record:
-    def __init__(self):
-        ...
-    def save_action_to_file(self, action,x):
-        with open(x, "a") as file:
-            file.write(str(action.square[0])+" "+str(action.square[1])+"\n")
-            file.close()
-
-    def action_to_g_board(self,x):
-        r=open(x,"r")
-        l=[]
-        for i in r:
-            a,b=map(int,i.split())
-            l.append((a,b))
-        return l
-'''
 
 import abc
+
+
 class ActionRecorder(abc.ABC):
     @abc.abstractmethod
     def moves(self) -> t.List[Action]:
@@ -79,69 +74,33 @@ class ActionRecorder(abc.ABC):
     @abc.abstractmethod
     def record(self, action: Action):
         ...
+    
+    @abc.abstractmethod
+    def erase(self):
+        ...
 
 
 class FileActionRecorder(ActionRecorder):
-    def __init__(self, f) -> None:
-        self.f=GFileControl(f)
+    def __init__(self, file: io.FileIO) -> None:
+        self._file = file
 
-    #Extracting from source
-    def moves(self):
-        ... 
-        # f=open(self.f,"r")
-        # r=open(self.f,"r")
-        # content=f.read(1)
-        #condition for empty file
-        r=self.f.ReadData()
-        l=[]
-        if not r:
-            pass
-        else:
-            for i in r:
-                a,b=map(int,i.split())
-                l.append((a,b))
-        # r.close()
-        return l
-        ...
+    def moves(self) -> t.List[Action]:
+        moves = list(map(int, self._file.read()))
+        actions = list(map(lambda i: Action((i // 3, i % 3)), moves))
+        return actions
 
-    #Adding into source
-    def record(self,action):
-        ...
-        # file=open(self.f, "a")
-        # file.write(str(action.square[0])+" "+str(action.square[1])+"\n")
-        # file.close()
-        self.f.WriteData(action)
+    def record(self, action: Action):
+        i, j = action.square
+        self._file.write(f"{i*3 + j}")
+        self._file.flush()
 
-  
 
-class DataManager(abc.ABC):
-    #@abc.abstractmethod
-    #def OpenData(self):
-    #    ...
+class SQLDatabaseActionRecorder(ActionRecorder):
+    def __init__(self, conn):
+        self._conn = conn
     
-    @abc.abstractmethod
-    def ReadData(self) -> str:
-        ...
-    @abc.abstractmethod
-    def WriteData(self,data):
-
-        ...
-    @abc.abstractmethod
-    def Close(self,f):
-
+    def moves(self) -> t.List[Action]:
         ...
 
-class GFileControl(DataManager):
-    def __init__(self,f):
-        self.f=f
-        self.file=open(self.f,"r+")
-
-    def ReadData(self) -> str:
-        if self.file:
-            return self.file.read()
-    def WriteData(self,data):
-        if self.file:
-            self.file.write(str(data.square[0])+" "+str(data.square[1])+"\n")
-    def Close(self, f):
-        self.file.close()
-    
+    def record(self, action: Action):
+        ...
