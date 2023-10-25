@@ -79,41 +79,69 @@ class ActionRecorder(abc.ABC):
     @abc.abstractmethod
     def record(self, action: Action):
         ...
-    @abc.abstractmethod
-    def delete(self):
-        pass
 
 
 class FileActionRecorder(ActionRecorder):
     def __init__(self, f) -> None:
-        self.f = f
+        self.f=GFileControl(f)
 
     #Extracting from source
     def moves(self):
         ... 
-        f=open(self.f,"r")
-        r=open(self.f,"r")
-        content=f.read(1)
+        # f=open(self.f,"r")
+        # r=open(self.f,"r")
+        # content=f.read(1)
         #condition for empty file
+        r=self.f.ReadData()
         l=[]
-        if not content:
+        if not r:
             pass
         else:
             for i in r:
                 a,b=map(int,i.split())
                 l.append((a,b))
-        r.close()
+        # r.close()
         return l
         ...
 
     #Adding into source
     def record(self,action):
         ...
-        file=open(self.f, "a")
-        file.write(str(action.square[0])+" "+str(action.square[1])+"\n")
-        file.close()
+        # file=open(self.f, "a")
+        # file.write(str(action.square[0])+" "+str(action.square[1])+"\n")
+        # file.close()
+        self.f.WriteData(action)
 
-    #remove the source
-    def delete(self):
-        pass
+  
 
+class DataManager(abc.ABC):
+    #@abc.abstractmethod
+    #def OpenData(self):
+    #    ...
+    
+    @abc.abstractmethod
+    def ReadData(self) -> str:
+        ...
+    @abc.abstractmethod
+    def WriteData(self,data):
+
+        ...
+    @abc.abstractmethod
+    def Close(self,f):
+
+        ...
+
+class GFileControl(DataManager):
+    def __init__(self,f):
+        self.f=f
+        self.file=open(self.f,"r+")
+
+    def ReadData(self) -> str:
+        if self.file:
+            return self.file.read()
+    def WriteData(self,data):
+        if self.file:
+            self.file.write(str(data.square[0])+" "+str(data.square[1])+"\n")
+    def Close(self, f):
+        self.file.close()
+    

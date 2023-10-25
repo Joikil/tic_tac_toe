@@ -7,7 +7,7 @@ class TicTacToe:
         #self.record= Record()
         #self.f_name="Game_record.txt"
         self.f_name_abs="Game_reco.txt"
-        x=open("Game_reco.txt","a")
+        x=open("Game_reco.txt","w")
         x.close()
         self.ar=FileActionRecorder(self.f_name_abs)
 
