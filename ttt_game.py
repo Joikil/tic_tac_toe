@@ -1,5 +1,6 @@
 import enum
 import typing as t
+#import 
 
 class Sign(enum.IntEnum):
     _ = enum.auto()
@@ -78,6 +79,10 @@ class ActionRecorder(abc.ABC):
     @abc.abstractmethod
     def record(self, action: Action):
         ...
+    @abc.abstractmethod
+    def delete(self):
+        pass
+
 
 class FileActionRecorder(ActionRecorder):
     def __init__(self, f) -> None:
@@ -86,18 +91,29 @@ class FileActionRecorder(ActionRecorder):
     #Extracting from source
     def moves(self):
         ... 
-        r=open(self.f,"ar")
-        content=r.read(1)
+        f=open(self.f,"r")
+        r=open(self.f,"r")
+        content=f.read(1)
         #condition for empty file
+        l=[]
         if not content:
             pass
         else:
             for i in r:
-                
-                ...
+                a,b=map(int,i.split())
+                l.append((a,b))
+        r.close()
+        return l
+        ...
+
     #Adding into source
     def record(self,action):
         ...
         file=open(self.f, "a")
         file.write(str(action.square[0])+" "+str(action.square[1])+"\n")
         file.close()
+
+    #remove the source
+    def delete(self):
+        pass
+
