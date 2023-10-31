@@ -1,7 +1,7 @@
 import enum
 import io
 import typing as t
-
+import sqlite3
 
 class Sign(enum.IntEnum):
     _ = enum.auto()
@@ -75,8 +75,8 @@ class ActionRecorder(abc.ABC):
     def record(self, action: Action):
         ...
     
-    @abc.abstractmethod
-    def erase(self):
+    #@abc.abstractmethod
+    #def erase(self):
         ...
 
 
@@ -96,11 +96,31 @@ class FileActionRecorder(ActionRecorder):
 
 
 class SQLDatabaseActionRecorder(ActionRecorder):
-    def __init__(self, conn):
+    def __init__(self, conn: sqlite3.Connection)-> None:
         self._conn = conn
+        self.cursor=self._conn.cursor()
+        
     
     def moves(self) -> t.List[Action]:
         ...
+        moves =self.cursor.execute("SELECT ACTION FROM MOVE;")
+        actions=list(map(lambda i: Action((i[0]//3,i[0]%3)), moves))               
+        return actions
 
     def record(self, action: Action):
         ...
+        # self.cursor.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='EMPLOYEE' ''')
+        # if(self.cursor.fetchone()[0]==1):
+        #     print("table exists")
+        # else:
+        #     table="""CREATE TABLE MOVE(ID INTEGER PRIMARY KEY,ACTION INTEGER);"""
+        #     self.cursor.execute(table)
+        i, j = action.square
+        val = i*3+j
+        self.cursor.execute('''INSERT INTO MOVE (ACTION) VALUES (?)''',(val,))
+        # for a in self.cursor.execute("SELECT ACTION FORM MOVE;"):
+            # print(a,end=" ")
+        self._conn.commit()
+
+
+

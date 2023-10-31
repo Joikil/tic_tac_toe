@@ -1,12 +1,13 @@
 import io
-from ttt_game import TicTacToeState, Action, Sign, Turn, FileActionRecorder
+from ttt_game import TicTacToeState, Action, Sign, Turn, FileActionRecorder, SQLDatabaseActionRecorder
 import os.path
-
+import sqlite3
 
 class TicTacToe:
-    def __init__(self, file: io.FileIO):
+    def __init__(self, conn : sqlite3.Connection):
         self.state = TicTacToeState()
-        self.ar = FileActionRecorder(file=file)
+        #self.ar = FileActionRecorder(file=file)
+        self.ar = SQLDatabaseActionRecorder(conn=conn)
 
     def play(self):
         while not self.state.ended():
@@ -52,11 +53,22 @@ class TicTacToe:
 
 
 def main():
-    with open("game.txt", "a+") as file:
-        file.seek(0)
-        game = TicTacToe(file=file)
-        game.play()
-        file.truncate(0)
+    # with open("game.txt", "a+") as file:
+        # file.seek(0)
+        # game = TicTacToe(file=file)
+        # game.play()
+        # file.truncate(0)
+    conn=sqlite3.connect('move.bd')
+    game = TicTacToe(conn=conn)
+    cursor=conn.cursor()
+    cursor.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='MOVE' ''')
+    if(cursor.fetchone()[0]!=1):
+        table="""CREATE TABLE MOVE(ID INTEGER PRIMARY KEY,ACTION INTEGER);"""
+        cursor.execute(table)      
+    game.play()
+    cursor.execute("DROP TABLE MOVE")
+    conn.commit()
+    conn.close()
     print("Game ended!")
 
 
