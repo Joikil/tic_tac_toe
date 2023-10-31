@@ -1,6 +1,4 @@
-import io
-from ttt_game import TicTacToeState, Action, Sign, Turn, FileActionRecorder, SQLDatabaseActionRecorder
-import os.path
+from ttt_game import TicTacToeState, Action, Sign, SQLDatabaseActionRecorder
 import sqlite3
 
 class TicTacToe:
@@ -53,11 +51,6 @@ class TicTacToe:
 
 
 def main():
-    # with open("game.txt", "a+") as file:
-        # file.seek(0)
-        # game = TicTacToe(file=file)
-        # game.play()
-        # file.truncate(0)
     conn=sqlite3.connect('move.bd')
     game = TicTacToe(conn=conn)
     cursor=conn.cursor()

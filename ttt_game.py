@@ -1,5 +1,4 @@
 import enum
-import io
 import typing as t
 import sqlite3
 
@@ -77,22 +76,6 @@ class ActionRecorder(abc.ABC):
     
     #@abc.abstractmethod
     #def erase(self):
-        ...
-
-
-class FileActionRecorder(ActionRecorder):
-    def __init__(self, file: io.FileIO) -> None:
-        self._file = file
-
-    def moves(self) -> t.List[Action]:
-        moves = list(map(int, self._file.read()))
-        actions = list(map(lambda i: Action((i // 3, i % 3)), moves))
-        return actions
-
-    def record(self, action: Action):
-        i, j = action.square
-        self._file.write(f"{i*3 + j}")
-        self._file.flush()
 
 
 class SQLDatabaseActionRecorder(ActionRecorder):
@@ -109,17 +92,10 @@ class SQLDatabaseActionRecorder(ActionRecorder):
 
     def record(self, action: Action):
         ...
-        # self.cursor.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='EMPLOYEE' ''')
-        # if(self.cursor.fetchone()[0]==1):
-        #     print("table exists")
-        # else:
-        #     table="""CREATE TABLE MOVE(ID INTEGER PRIMARY KEY,ACTION INTEGER);"""
-        #     self.cursor.execute(table)
+
         i, j = action.square
         val = i*3+j
-        self.cursor.execute('''INSERT INTO MOVE (ACTION) VALUES (?)''',(val,))
-        # for a in self.cursor.execute("SELECT ACTION FORM MOVE;"):
-            # print(a,end=" ")
+        self.cursor.execute('''INSERT INTO MOVE (ACTION) VALUES (?)''',(val,))       
         self._conn.commit()
 
 
